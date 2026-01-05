@@ -1,3 +1,6 @@
+// react
+import { useState } from 'react';
+
 // next link
 import Link from 'next/link';
 
@@ -5,15 +8,50 @@ import Link from 'next/link';
 import ParticlesContainer from '../components/ParticlesContainer';
 
 // icons
-import { RxDesktop, RxPencil2, RxReader, RxMixerHorizontal } from 'react-icons/rx';
+import { RxDesktop, RxPencil2, RxReader, RxMixerHorizontal, RxPlus, RxMinus } from 'react-icons/rx';
+import { HiOutlineCurrencyDollar, HiOutlineChartBar, HiOutlineCog, HiOutlineLightBulb, HiOutlineExclamationCircle } from 'react-icons/hi';
 
 // framer motion
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // variants
 import { fadeIn } from '../variants';
 
 const Home = () => {
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const toggleFaq = (index) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
+  const faqData = [
+    {
+      icon: <HiOutlineCurrencyDollar className='text-2xl' />,
+      question: '¿Cuánto cuesta desarrollar un software o aplicación a medida en Chile?',
+      answer: 'El costo de un desarrollo a medida varía según la complejidad técnica, las integraciones requeridas y la escala del proyecto. En 4founders.cl nos alejamos de las soluciones "baratas" que generan deuda técnica y nos enfocamos en construir activos digitales que ofrezcan un retorno de inversión real, desglosando costos de infraestructura, mantenimiento y horas hombre especializadas.'
+    },
+    {
+      icon: <HiOutlineLightBulb className='text-2xl' />,
+      question: '¿Qué es la deuda técnica y cómo afecta la valoración de mi Startup?',
+      answer: 'La deuda técnica ocurre cuando se prioriza la rapidez sobre la calidad del código. Esto no solo hace que el software sea más costoso de mantener a largo plazo, sino que puede reducir drásticamente la valoración de tu empresa ante inversionistas o procesos de Due Diligence técnico. Nosotros entregamos código limpio y escalable, vital para postulaciones a fondos como Semilla Inicia de Corfo.'
+    },
+    {
+      icon: <HiOutlineCog className='text-2xl' />,
+      question: '¿Cómo puedo integrar mi sistema con la API del SII o bancos locales?',
+      answer: 'La integración con servicios locales como el SII, Webpay o sistemas de RRHH (Buk, Talana) requiere un manejo experto de protocolos de seguridad y autenticación. Desarrollamos middleware personalizado para automatizar la facturación electrónica y conciliaciones bancarias, eliminando errores manuales y optimizando la comunicación entre tus plataformas actuales.'
+    },
+    {
+      icon: <HiOutlineChartBar className='text-2xl' />,
+      question: '¿Cuál es la diferencia real entre Business Intelligence y Data Science?',
+      answer: 'Mientras que el Business Intelligence (BI) te ayuda a visualizar lo que ya ocurrió en tu negocio mediante dashboards, la Ciencia de Datos (Data Science) utiliza algoritmos y Machine Learning para predecir comportamientos futuros. Ayudamos a las empresas a pasar de la visualización estática a modelos predictivos de demanda y retención de clientes.'
+    },
+    {
+      icon: <HiOutlineExclamationCircle className='text-2xl' />,
+      question: '¿Por qué fallan los proyectos de software y cómo pueden rescatarse?',
+      answer: 'La falta de una arquitectura sólida y una mala gestión de expectativas son causas comunes de fracaso en el rubro. Ofrecemos servicios de auditoría y rescate de proyectos, donde evaluamos el estado actual del código, refactorizamos componentes críticos y estabilizamos la plataforma para que finalmente cumpla sus objetivos de negocio.'
+    }
+  ];
+
   return (
     <div className='bg-primary/60 h-full overflow-y-auto'>
       {/* Hero Section */}
@@ -334,6 +372,86 @@ const Home = () => {
               Agenda una evaluación técnica gratuita
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className='w-full bg-primary py-24 px-6'>
+        <div className='container mx-auto'>
+          <motion.h2
+            variants={fadeIn('up', 0.2)}
+            initial='hidden'
+            whileInView='show'
+            viewport={{ once: false, amount: 0.2 }}
+            className='h2 text-center mb-16'
+          >
+            Consultas Frecuentes sobre <span className='text-accent'>Tecnología y Estrategia Digital</span>
+          </motion.h2>
+
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
+            {/* FAQ Accordion */}
+            <div className='lg:col-span-2 space-y-4'>
+              {faqData.map((faq, index) => (
+                <motion.div
+                  key={index}
+                  variants={fadeIn('up', 0.2 + index * 0.1)}
+                  initial='hidden'
+                  whileInView='show'
+                  viewport={{ once: false, amount: 0.2 }}
+                  className='bg-[rgba(65,47,123,0.15)] rounded-lg overflow-hidden'
+                >
+                  <button
+                    onClick={() => toggleFaq(index)}
+                    className='w-full flex items-center justify-between p-6 text-left hover:bg-[rgba(89,65,169,0.15)] transition-all'
+                  >
+                    <div className='flex items-center gap-4'>
+                      <span className='text-accent'>{faq.icon}</span>
+                      <h3 className='text-lg font-semibold pr-4'>{faq.question}</h3>
+                    </div>
+                    <span className='text-accent flex-shrink-0'>
+                      {openFaq === index ? <RxMinus className='text-xl' /> : <RxPlus className='text-xl' />}
+                    </span>
+                  </button>
+                  <AnimatePresence>
+                    {openFaq === index && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <p className='px-6 pb-6 text-white/60 leading-relaxed'>
+                          {faq.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Visual Blocks */}
+            <div className='space-y-6'>
+              <motion.div
+                variants={fadeIn('left', 0.3)}
+                initial='hidden'
+                whileInView='show'
+                viewport={{ once: false, amount: 0.2 }}
+                className='h-48 bg-white/5 rounded-xl flex items-center justify-center'
+              >
+                <span className='text-white/30 text-sm text-center px-4'>Diagrama de Arquitectura de Integración</span>
+              </motion.div>
+              <motion.div
+                variants={fadeIn('left', 0.4)}
+                initial='hidden'
+                whileInView='show'
+                viewport={{ once: false, amount: 0.2 }}
+                className='h-48 bg-white/5 rounded-xl flex items-center justify-center'
+              >
+                <span className='text-white/30 text-sm text-center px-4'>Comparativa BI vs Data Science</span>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
